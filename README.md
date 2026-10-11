@@ -70,7 +70,9 @@ New to caching? [Anthropic explains how Claude Code uses it](https://code.claude
 
 The refusal, verbatim:
 
-    cache-tax: the prompt cache went cold 2h00m ago. Sending this re-writes up to 200,502 tokens at $20/MTok = $4.01 (a warm turn would have cost $0.05). Send it again to pay it, and keepwarm will then hold the cache for 3h00m. Or /clear and start from a note.
+    cache-tax: the prompt cache went cold 2h00m ago. Sending this re-writes up to 200,502 tokens at $20/MTok = $4.01 (a warm turn would have cost $0.05). Send it again or press Resend to pay it, and keepwarm will then hold the cache for 3h00m. Or /clear and start from a note.
+
+On a surface with the band above the prompt, the refused message is also kept there as `held: "..."` beside a **Resend and pay** button. Pressing it submits the same text once, as your own words, and counts the write like a manual resend would. Typing anything else, sending it by hand, or `/clear` retires the button. The held text stays in memory for the session and is never written to the store.
 
 The figure is an upper bound. The context count the engine reports for a resumed session is the last response's input, cache read, cache write and output together, and the resume payload carries no separate output count to take off; on one 15-day-old session the refusal said 330,316 tokens and $6.61 and the write that followed was 314k tokens, $6.28.
 
@@ -144,9 +146,9 @@ claude plugin validate .claude-plugin/plugin.json
 claude plugin test .
 ```
 
-The [56 tests](tests/register.test.ts) use a mock clock and engine. They cover:
+The [58 tests](tests/register.test.ts) use a mock clock and engine. They cover:
 
-- **Guard:** refuse once and resend, warn mode, slash commands, small contexts, resume seeding and cold-write scoring.
+- **Guard:** refuse once and resend, the Resend button, warn mode, slash commands, small contexts, resume seeding and cold-write scoring.
 - **Warming:** command defaults, always/off, idle resets, usage-based stopping, cold-window expiry and delayed timers after sleep.
 - **Session state:** isolated store keys, restored windows, legacy cleanup, clear/compaction resets and subagent isolation.
 - **Pricing and display:** model matching, output and uncached input costs, context counts, duration formatting and the read-only break-even figure.
